@@ -1,0 +1,100 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.22.6.54827",
+      "templateHash": "10092970993873173113"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "The location where the resources will be created."
+      }
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. The tags to be assigned to the created resources."
+      }
+    },
+    "containerAppsEnvironmentId": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource Id of the container apps environment."
+      }
+    },
+    "backendApiServiceImage": {
+      "type": "string",
+      "metadata": {
+        "description": "The image for the backend api service."
+      }
+    },
+    "dbName": {
+      "type": "string",
+      "metadata": {
+        "description": "The db name."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.App/containerApps",
+      "apiVersion": "2023-05-01",
+      "name": "backend-api-service",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "managedEnvironmentId": "[parameters('containerAppsEnvironmentId')]",
+        "configuration": {
+          "activeRevisionsMode": "Single",
+          "ingress": {
+            "external": true,
+            "targetPort": 8080
+          },
+          "secrets": [
+            {
+              "name": "connection-string",
+              "value": "[parameters('dbName')]"
+            }
+          ]
+        },
+        "template": {
+          "containers": [
+            {
+              "name": "backend-service-api",
+              "image": "[parameters('backendApiServiceImage')]",
+              "resources": {
+                "cpu": "[json('0.25')]",
+                "memory": "0.5Gi"
+              },
+              "env": [
+                {
+                  "name": "Logging__LogLevel__Default",
+                  "value": "Information"
+                },
+                {
+                  "name": "Logging__LogLevel__Microsoft.AspNetCore",
+                  "value": "Warning"
+                },
+                {
+                  "name": "ConnectionStrings__Database",
+                  "value": "[parameters('dbName')]"
+                }
+              ]
+            }
+          ],
+          "scale": {
+            "minReplicas": 1,
+            "maxReplicas": 1
+          }
+        }
+      }
+    }
+  ]
+}

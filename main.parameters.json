@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "containerAppsEnvironmentName": {
+      "value": "container-apps-env-test"
+    },
+    "logAnalyticsWorkspaceName": {
+      "value": "log-analytics-workspace-test"
+    },
+    "applicationInsightName": {
+      "value": "application-insight-test"
+    },
+    "adminPassword": {
+      "value": "First132."
+    },
+    "backendApiServiceImage": {
+      "value": "nikolabuzej/deployment-test-app:v1"
+    }
+  }
+}

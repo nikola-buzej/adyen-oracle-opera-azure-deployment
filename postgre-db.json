@@ -1,0 +1,116 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.22.6.54827",
+      "templateHash": "14494149144243101870"
+    }
+  },
+  "parameters": {
+    "administratorLoginPassword": {
+      "type": "securestring"
+    },
+    "location": {
+      "type": "string"
+    },
+    "clusterName": {
+      "type": "string"
+    },
+    "coordinatorVCores": {
+      "type": "int",
+      "defaultValue": 4
+    },
+    "coordinatorStorageQuotaInMb": {
+      "type": "int",
+      "defaultValue": 262144
+    },
+    "coordinatorServerEdition": {
+      "type": "string",
+      "defaultValue": "GeneralPurpose"
+    },
+    "enableShardsOnCoordinator": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "nodeServerEdition": {
+      "type": "string",
+      "defaultValue": "MemoryOptimized"
+    },
+    "nodeVCores": {
+      "type": "int",
+      "defaultValue": 4
+    },
+    "nodeStorageQuotaInMb": {
+      "type": "int",
+      "defaultValue": 524288
+    },
+    "nodeCount": {
+      "type": "int",
+      "defaultValue": 1
+    },
+    "enableHa": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "coordinatorEnablePublicIpAccess": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "nodeEnablePublicIpAccess": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "availabilityZone": {
+      "type": "string",
+      "defaultValue": "1"
+    },
+    "postgresqlVersion": {
+      "type": "string",
+      "defaultValue": "15"
+    },
+    "citusVersion": {
+      "type": "string",
+      "defaultValue": "12.0"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DBforPostgreSQL/flexibleServers/databases",
+      "apiVersion": "2021-06-01",
+      "name": "[format('{0}/{1}', 'app', 'test')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', 'app')]"
+      ]
+    },
+    {
+      "type": "Microsoft.DBforPostgreSQL/flexibleServers",
+      "apiVersion": "2021-06-01",
+      "name": "app",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard_B1ms",
+        "tier": "Burstable"
+      },
+      "properties": {
+        "administratorLogin": "adyen",
+        "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+        "createMode": "Create",
+        "version": "14",
+        "storage": {
+          "storageSizeGB": 32
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "dbServerId": {
+      "type": "string",
+      "metadata": {
+        "description": "Id of the postgres database server"
+      },
+      "value": "[format('Host={0};Database=test;Username=adyen;Password={1}', reference(resourceId('Microsoft.DBforPostgreSQL/flexibleServers', 'app'), '2021-06-01').fullyQualifiedDomainName, parameters('administratorLoginPassword'))]"
+    }
+  }
+}
