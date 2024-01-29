@@ -4,21 +4,7 @@ targetScope = 'resourceGroup'
 @secure()
 param administratorLoginPassword string
 param location string
-param clusterName string
-param coordinatorVCores int = 4
-param coordinatorStorageQuotaInMb int = 262144
-param coordinatorServerEdition string = 'GeneralPurpose'
-param enableShardsOnCoordinator bool = true
-param nodeServerEdition string = 'MemoryOptimized'
-param nodeVCores int = 4
-param nodeStorageQuotaInMb int = 524288
-param nodeCount int = 1
-param enableHa bool = false
-param coordinatorEnablePublicIpAccess bool = true
-param nodeEnablePublicIpAccess bool = true
-param availabilityZone string = '1'
-param postgresqlVersion string = '15'
-param citusVersion string = '12.0'
+param serverName string
 
 // resource virtualNetwork 'Microsoft.Network/virtualNetworks@2019-11-01' = {
 //   name: 'database-vnet'
@@ -71,7 +57,7 @@ param citusVersion string = '12.0'
 // }
 
 resource server 'Microsoft.DBforPostgreSQL/flexibleServers@2021-06-01' = {
-  name: 'app'
+  name: serverName
   location: location
   sku: {
       name: 'Standard_B1ms'
