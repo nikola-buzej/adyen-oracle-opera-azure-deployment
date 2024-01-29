@@ -32,6 +32,12 @@ resource backendApiAppService 'Microsoft.App/containerApps@2023-05-01' = {
       ingress: {
         external: true
         targetPort: 8080
+        traffic: [
+          {
+            latestRevision:true
+            weight: 100
+          }
+        ]
       }
     secrets: [
       {name: 'connection-string', value: dbName}
