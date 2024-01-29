@@ -63,6 +63,13 @@ resource server 'Microsoft.DBforPostgreSQL/flexibleServers@2021-06-01' = {
       name: 'Standard_B1ms'
       tier: 'Burstable'
   }
+  resource allowedIps 'firewallRules@2022-12-01' = {
+    name: 'AllowAllWindowsAzureIps'
+    properties:{
+      endIpAddress: '0.0.0.0'
+      startIpAddress: '0.0.0.0'
+    }
+  }
   resource database 'databases' = {
     name: 'test'
   }
